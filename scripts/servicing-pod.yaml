@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  generateName: apollo-one-shot-servicing-
+  namespace: apollo-one-shot
+  labels:
+    app: apollo-one-shot-servicing
+spec:
+  containers:
+    - name: apollo-one-shot
+      image: ubi9/ubi:9.0.0
+      command: ["/bin/bash"]
+      args:
+        ["-c","cd /usr; yum install git -y && git clone --branch ${GIT_BRANCH} ${GIT_REPOSITORY}; cd ./ibm-cp4ba-enterprise-deployment/scripts; chmod u+x servicing.sh; ./servicing.sh; while true; do echo 'Apollo one-shot servicing pod - Ready - Enter it via Terminal and \"bash -l\" - Delete it after you are done.'; sleep 300; done"]      
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: GIT_REPOSITORY
+          value: https://github.com/apollo-business-automation/ibm-cp4ba-enterprise-deployment.git
+        - name: GIT_BRANCH
+          value: main
+        - name: CONTAINER_RUN_MODE
+          value: "true"
+      volumeMounts:
+        - name: config
+          mountPath: /config/
+  volumes:
+    - name: config
+      configMap:
+        name: apollo-one-shot
