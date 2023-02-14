@@ -153,7 +153,7 @@
         (register_group_response.status != 200) and
         ('duplicate key value' not in register_group_response.content)
 
-  when: group_response.status == 409
+  when: group_response.status != 409
 
 # Groups endpoint found based on the network dev tools in the browser
 - name: Add All Roles to cpusers groups
